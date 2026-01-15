@@ -18,6 +18,7 @@ function showNotification(message, type = 'info') {
     setTimeout(() => notificationEl.classList.remove('show'), 5000);
 }
 
+// Преобразует YYYY-MM-DD → dd.mm.yyyy
 function formatDateForAPI(dateStr) {
     if (!dateStr) return '';
     const [year, month, day] = dateStr.split('-');
@@ -40,8 +41,8 @@ async function loadCartGoods() {
         cartGoods = await Promise.all(promises);
         renderCart();
     } catch (err) {
-        console.error(err);
-        showNotification('Ошибка загрузки товаров корзины', 'error');
+        console.error('Ошибка загрузки товаров:', err);
+        showNotification('Не удалось загрузить товары корзины', 'error');
     }
 }
 
@@ -113,37 +114,33 @@ function updateTotalPrice() {
     deliveryCostEl.textContent = `${deliveryCost} ₽`;
 }
 
-// Основная функция отправки заказа
 async function submitOrder(data) {
     try {
-        console.log('Отправляем данные:', data); // ← Для отладки
-
         const res = await fetch(`${API_BASE}/orders?api_key=${API_KEY}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
         });
 
-        const responseData = await res.json(); // ← Читаем ответ, даже если ошибка
-
-        console.log('Ответ сервера:', responseData);
+        const result = await res.json();
 
         if (!res.ok) {
-            throw new Error(responseData.error || 'Неизвестная ошибка');
+            throw new Error(result.error || 'Ошибка сервера');
         }
 
-        return responseData;
-
+        return result;
     } catch (err) {
-        console.error('Ошибка при отправке заказа:', err);
+        console.error('Ошибка при оформлении заказа:', err);
         showNotification(`Ошибка: ${err.message}`, 'error');
         return null;
     }
 }
 
+// Обновление цены при изменении даты или интервала
 deliveryDateInput.addEventListener('change', updateTotalPrice);
 deliveryIntervalSelect.addEventListener('change', updateTotalPrice);
 
+// Отправка формы
 orderForm.addEventListener('submit', async (e) => {
     e.preventDefault();
 
@@ -152,7 +149,6 @@ orderForm.addEventListener('submit', async (e) => {
         return;
     }
 
-    // Валидация формы
     const fullName = document.getElementById('fullName').value.trim();
     const email = document.getElementById('email').value.trim();
     const phone = document.getElementById('phone').value.trim();
@@ -160,55 +156,43 @@ orderForm.addEventListener('submit', async (e) => {
     const date = deliveryDateInput.value;
     const interval = deliveryIntervalSelect.value;
 
-    if (!fullName) {
-        showNotification('Введите имя', 'error');
+    if (!fullName || !email || !phone || !address) {
+        showNotification('Заполните все обязательные поля', 'error');
         return;
     }
-    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-        showNotification('Введите корректный email', 'error');
-        return;
-    }
-    if (!phone) {
-        showNotification('Введите телефон', 'error');
-        return;
-    }
-    if (!address) {
-        showNotification('Введите адрес доставки', 'error');
-        return;
-    }
+
     if (!date) {
         showNotification('Выберите дату доставки', 'error');
         return;
     }
+
     if (!interval) {
         showNotification('Выберите интервал доставки', 'error');
         return;
     }
 
+    // Подготовка данных в точном соответствии с API
     const formData = {
         full_name: fullName,
         email: email,
         phone: phone,
         subscribe: document.getElementById('subscribe').checked,
         delivery_address: address,
-        delivery_date: formatDateForAPI(date), // ← Формат dd.mm.yyyy
+        delivery_date: formatDateForAPI(date), // ← КЛЮЧЕВОЙ МОМЕНТ
         delivery_interval: interval,
         comment: document.getElementById('comment').value.trim(),
-        good_ids: cartGoods.map(g => g.id)
+        good_ids: cartGoods.map(g => g.id) // массив чисел
     };
-
-    console.log('Подготовленные данные для отправки:', formData); // ← Логирование
 
     const result = await submitOrder(formData);
     if (result) {
         localStorage.removeItem('cart');
         showNotification('Заказ успешно оформлен!', 'success');
-        setTimeout(() => {
-            window.location.href = 'index.html';
-        }, 1500);
+        setTimeout(() => window.location.href = 'index.html', 1500);
     }
 });
 
+// Инициализация
 document.addEventListener('DOMContentLoaded', () => {
     loadCartGoods();
 });
