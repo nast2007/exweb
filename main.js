@@ -4,9 +4,7 @@ const API_KEY = '9bcdd3a0-f5ab-4f24-af75-f01ebb79f6c3';
 let allGoods = [];
 let filteredGoods = [];
 let currentSort = 'rating_desc';
-let categoriesSet = new Set();
 
-// DOM Elements
 const goodsContainer = document.getElementById('goodsContainer');
 const categoryFilters = document.getElementById('categoryFilters');
 const priceFromInput = document.getElementById('priceFrom');
@@ -20,21 +18,16 @@ const notificationEl = document.getElementById('notification');
 let displayedCount = 0;
 const perPage = 10;
 
-// Уведомление
 function showNotification(message, type = 'info') {
     notificationEl.textContent = message;
     notificationEl.className = `notification ${type} show`;
-    setTimeout(() => {
-        notificationEl.classList.remove('show');
-    }, 5000);
+    setTimeout(() => notificationEl.classList.remove('show'), 5000);
 }
 
-// Получение всех товаров
 async function fetchAllGoods() {
     try {
-        const url = `${API_BASE}/goods?api_key=${API_KEY}`;
-        const res = await fetch(url);
-        if (!res.ok) throw new Error('Ошибка загрузки товаров');
+        const res = await fetch(`${API_BASE}/goods?api_key=${API_KEY}`);
+        if (!res.ok) throw new Error('Ошибка загрузки');
         allGoods = await res.json();
         buildCategoriesFilter();
         applyFiltersAndRender();
@@ -44,50 +37,36 @@ async function fetchAllGoods() {
     }
 }
 
-// Построение списка категорий
 function buildCategoriesFilter() {
-    categoriesSet.clear();
+    const categories = [...new Set(allGoods.map(g => g.main_category).filter(Boolean))];
     categoryFilters.innerHTML = '';
-    allGoods.forEach(good => {
-        if (good.main_category) categoriesSet.add(good.main_category);
-    });
-
-    categoriesSet.forEach(cat => {
+    categories.forEach(cat => {
         const label = document.createElement('label');
-        const checkbox = document.createElement('input');
-        checkbox.type = 'checkbox';
-        checkbox.value = cat;
-        checkbox.id = `cat-${cat.replace(/\s+/g, '-')}`;
-        label.appendChild(checkbox);
+        const cb = document.createElement('input');
+        cb.type = 'checkbox';
+        cb.value = cat;
+        label.appendChild(cb);
         label.appendChild(document.createTextNode(` ${cat}`));
         categoryFilters.appendChild(label);
     });
 }
 
-// Фильтрация товаров
 function applyFilters() {
-    const selectedCategories = Array.from(categoryFilters.querySelectorAll('input:checked')).map(cb => cb.value);
+    const selectedCats = Array.from(categoryFilters.querySelectorAll('input:checked')).map(cb => cb.value);
     const priceFrom = priceFromInput.value ? Number(priceFromInput.value) : null;
     const priceTo = priceToInput.value ? Number(priceToInput.value) : null;
     const onlyDiscount = onlyDiscountCheckbox.checked;
 
     filteredGoods = allGoods.filter(good => {
-        // Фильтр по категории
-        if (selectedCategories.length > 0 && !selectedCategories.includes(good.main_category)) return false;
-
-        // Фильтр по цене
-        const price = good.discount_price !== null ? good.discount_price : good.actual_price;
+        if (selectedCats.length && !selectedCats.includes(good.main_category)) return false;
+        const price = good.discount_price ?? good.actual_price;
         if (priceFrom !== null && price < priceFrom) return false;
         if (priceTo !== null && price > priceTo) return false;
-
-        // Фильтр по скидке
         if (onlyDiscount && good.discount_price === null) return false;
-
         return true;
     });
 }
 
-// Сортировка
 function sortGoods(goods) {
     return [...goods].sort((a, b) => {
         const priceA = a.discount_price ?? a.actual_price;
@@ -102,7 +81,6 @@ function sortGoods(goods) {
     });
 }
 
-// Отображение товаров (с пагинацией)
 function renderGoods(page = 1) {
     const sorted = sortGoods(filteredGoods);
     const start = (page - 1) * perPage;
@@ -112,7 +90,7 @@ function renderGoods(page = 1) {
     if (page === 1) goodsContainer.innerHTML = '';
 
     if (pageGoods.length === 0 && page === 1) {
-        goodsContainer.innerHTML = '<p>Нет товаров, соответствующих вашему запросу</p>';
+        goodsContainer.innerHTML = '<p>Нет товаров по вашему запросу</p>';
         loadMoreBtn.style.display = 'none';
         return;
     }
@@ -124,7 +102,7 @@ function renderGoods(page = 1) {
         const img = document.createElement('img');
         img.src = good.image_url.trim();
         img.alt = good.name;
-        img.onerror = () => { img.src = 'assets/placeholder.png'; };
+        img.onerror = () => img.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="180" height="180" viewBox="0 0 24 24"><rect fill="%23eee" width="24" height="24"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-size="4" fill="%23999">No image</text></svg>';
 
         const content = document.createElement('div');
         content.className = 'good-card-content';
@@ -135,15 +113,12 @@ function renderGoods(page = 1) {
 
         const rating = document.createElement('div');
         rating.className = 'good-card-rating';
-        rating.innerHTML = `<span>★ ${good.rating}</span>`;
+        rating.textContent = `★ ${good.rating}`;
 
         const priceDiv = document.createElement('div');
         priceDiv.className = 'good-card-price';
         if (good.discount_price !== null) {
-            priceDiv.innerHTML = `
-                <span class="actual">${good.discount_price} ₽</span>
-                <span class="discount">${good.actual_price} ₽</span>
-            `;
+            priceDiv.innerHTML = `<span class="actual">${good.discount_price} ₽</span> <span class="discount">${good.actual_price} ₽</span>`;
         } else {
             priceDiv.innerHTML = `<span class="actual">${good.actual_price} ₽</span>`;
         }
@@ -175,8 +150,7 @@ function addToCart(goodId) {
     }
 }
 
-// Обработчики событий
-applyFiltersBtn.addEventListener('click', (e) => {
+applyFiltersBtn.addEventListener('click', e => {
     e.preventDefault();
     applyFiltersAndRender();
 });
@@ -191,7 +165,4 @@ loadMoreBtn.addEventListener('click', () => {
     renderGoods(nextPage);
 });
 
-// Инициализация
-document.addEventListener('DOMContentLoaded', () => {
-    fetchAllGoods();
-});
+document.addEventListener('DOMContentLoaded', fetchAllGoods);
