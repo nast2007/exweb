@@ -3,16 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Главный каталог</title>
-    <link rel="stylesheet" href="css/style.css">
+    <title>Каталог</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <!-- Хедер -->
     <header class="header">
         <div class="container header__container">
-            <a href="index.html" class="logo">Logo</a>
+            <a href="index.html" class="logo">Shop</a>
             <form class="search-form" id="searchForm">
-                <input type="text" id="searchInput" placeholder="Введите запрос">
+                <input type="text" id="searchInput" placeholder="Поиск товаров...">
                 <button type="submit">Найти</button>
             </form>
             <div class="header__nav">
@@ -22,18 +21,13 @@
         </div>
     </header>
 
-    <!-- Уведомления -->
     <div id="notification" class="notification"></div>
 
-    <!-- Основной контент -->
     <main class="container">
         <div class="main-content">
-            <!-- Сайдбар с фильтрами -->
             <aside class="sidebar">
                 <h2>Категории</h2>
-                <div id="categoryFilters" class="filter-group">
-                    <!-- Категории будут подгружаться динамически -->
-                </div>
+                <div id="categoryFilters" class="filter-group"></div>
 
                 <h2>Стоимость</h2>
                 <div class="filter-group">
@@ -42,13 +36,12 @@
                 </div>
 
                 <div class="filter-group">
-                    <label><input type="checkbox" id="onlyDiscount"> Только товары со скидками</label>
+                    <label><input type="checkbox" id="onlyDiscount"> Только со скидкой</label>
                 </div>
 
                 <button id="applyFilters" class="btn">Применить</button>
             </aside>
 
-            <!-- Блок каталога -->
             <section class="catalog">
                 <h1>Каталог</h1>
                 <select id="sortOrder">
@@ -58,23 +51,18 @@
                     <option value="price_desc">По убыванию цены</option>
                 </select>
 
-                <div id="goodsContainer" class="goods-grid">
-                    <!-- Товары будут подгружаться динамически -->
-                </div>
-
+                <div id="goodsContainer" class="goods-grid"></div>
                 <button id="loadMoreBtn" class="btn">Загрузить ещё</button>
             </section>
         </div>
     </main>
 
-    <!-- Футер -->
     <footer class="footer">
         <div class="container">
-            <p>&copy; 2025 Название компании</p>
+            <p>&copy; 2026 Интернет-магазин</p>
         </div>
     </footer>
 
-    <!-- Подключение скриптов -->
-    <script src="js/main.js" defer></script>
+    <script src="main.js" defer></script>
 </body>
 </html>
