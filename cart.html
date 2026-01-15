@@ -4,13 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Корзина</title>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <!-- Хедер -->
     <header class="header">
         <div class="container header__container">
-            <a href="index.html" class="logo">Logo</a>
+            <a href="index.html" class="logo">Shop</a>
             <div class="header__nav">
                 <a href="index.html" class="nav-icon">🏠</a>
                 <a href="orders.html" class="nav-icon">👤</a>
@@ -18,16 +17,12 @@
         </div>
     </header>
 
-    <!-- Уведомления -->
     <div id="notification" class="notification"></div>
 
-    <!-- Основной контент -->
     <main class="container">
         <section class="cart">
             <h1>Корзина</h1>
-            <div id="cartItems" class="goods-grid">
-                <!-- Товары из корзины будут подгружаться динамически -->
-            </div>
+            <div id="cartItems" class="goods-grid"></div>
             <div id="emptyCartMessage" class="empty-message" style="display: none;">
                 Корзина пуста. Перейдите в каталог, чтобы добавить товары.
             </div>
@@ -49,7 +44,7 @@
 
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="phone">Номер телефона</label>
+                        <label for="phone">Телефон</label>
                         <input type="text" id="phone" required>
                     </div>
                     <div class="form-group">
@@ -64,20 +59,19 @@
                         <input type="email" id="email" required>
                     </div>
                     <div class="form-group">
-                        <label for="deliveryInterval">Временной интервал доставки</label>
+                        <label for="deliveryInterval">Интервал доставки</label>
                         <select id="deliveryInterval" required>
-                            <option value="">Выберите интервал</option>
-                            <option value="08:00-12:00">08:00-12:00</option>
-                            <option value="12:00-14:00">12:00-14:00</option>
-                            <option value="14:00-18:00">14:00-18:00</option>
-                            <option value="18:00-22:00">18:00-22:00</option>
+                            <option value="">Выберите</option>
+                            <option value="08:00-12:00">08:00–12:00</option>
+                            <option value="12:00-14:00">12:00–14:00</option>
+                            <option value="14:00-18:00">14:00–18:00</option>
+                            <option value="18:00-22:00">18:00–22:00</option>
                         </select>
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label for="subscribe">Подписаться на рассылку</label>
-                    <input type="checkbox" id="subscribe">
+                    <label><input type="checkbox" id="subscribe"> Подписаться на рассылку</label>
                 </div>
 
                 <div class="form-group">
@@ -86,8 +80,8 @@
                 </div>
 
                 <div class="total-cost">
-                    Итоговая стоимость: <span id="totalPrice">0 ₽</span>
-                    <br>(стоимость доставки <span id="deliveryCost">0 ₽</span>)
+                    Итого: <span id="totalPrice">0 ₽</span>
+                    <br><small>(доставка: <span id="deliveryCost">0 ₽</span>)</small>
                 </div>
 
                 <div class="form-actions">
@@ -98,14 +92,12 @@
         </section>
     </main>
 
-    <!-- Футер -->
     <footer class="footer">
         <div class="container">
-            <p>&copy; 2025 Название компании</p>
+            <p>&copy; 2026 Интернет-магазин</p>
         </div>
     </footer>
 
-    <!-- Подключение скриптов -->
-    <script src="js/cart.js" defer></script>
+    <script src="cart.js" defer></script>
 </body>
 </html>
