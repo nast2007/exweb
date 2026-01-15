@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Главный каталог</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Хедер -->
+    <header class="header">
+        <div class="container header__container">
+            <a href="index.html" class="logo">Logo</a>
+            <form class="search-form" id="searchForm">
+                <input type="text" id="searchInput" placeholder="Введите запрос">
+                <button type="submit">Найти</button>
+            </form>
+            <div class="header__nav">
+                <a href="cart.html" class="nav-icon">🛒</a>
+                <a href="orders.html" class="nav-icon">👤</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Уведомления -->
+    <div id="notification" class="notification"></div>
+
+    <!-- Основной контент -->
+    <main class="container">
+        <div class="main-content">
+            <!-- Сайдбар с фильтрами -->
+            <aside class="sidebar">
+                <h2>Категории</h2>
+                <div id="categoryFilters" class="filter-group">
+                    <!-- Категории будут подгружаться динамически -->
+                </div>
+
+                <h2>Стоимость</h2>
+                <div class="filter-group">
+                    <label>От <input type="number" id="priceFrom" min="0" value="0"></label>
+                    <label>До <input type="number" id="priceTo" min="0" value="10000"></label>
+                </div>
+
+                <div class="filter-group">
+                    <label><input type="checkbox" id="onlyDiscount"> Только товары со скидками</label>
+                </div>
+
+                <button id="applyFilters" class="btn">Применить</button>
+            </aside>
+
+            <!-- Блок каталога -->
+            <section class="catalog">
+                <h1>Каталог</h1>
+                <select id="sortOrder">
+                    <option value="rating_desc">По убыванию рейтинга</option>
+                    <option value="rating_asc">По возрастанию рейтинга</option>
+                    <option value="price_asc">По возрастанию цены</option>
+                    <option value="price_desc">По убыванию цены</option>
+                </select>
+
+                <div id="goodsContainer" class="goods-grid">
+                    <!-- Товары будут подгружаться динамически -->
+                </div>
+
+                <button id="loadMoreBtn" class="btn">Загрузить ещё</button>
+            </section>
+        </div>
+    </main>
+
+    <!-- Футер -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 Название компании</p>
+        </div>
+    </footer>
+
+    <!-- Подключение скриптов -->
+    <script src="js/main.js" defer></script>
+</body>
+</html>
