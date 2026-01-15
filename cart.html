@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Корзина</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Хедер -->
+    <header class="header">
+        <div class="container header__container">
+            <a href="index.html" class="logo">Logo</a>
+            <div class="header__nav">
+                <a href="index.html" class="nav-icon">🏠</a>
+                <a href="orders.html" class="nav-icon">👤</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Уведомления -->
+    <div id="notification" class="notification"></div>
+
+    <!-- Основной контент -->
+    <main class="container">
+        <section class="cart">
+            <h1>Корзина</h1>
+            <div id="cartItems" class="goods-grid">
+                <!-- Товары из корзины будут подгружаться динамически -->
+            </div>
+            <div id="emptyCartMessage" class="empty-message" style="display: none;">
+                Корзина пуста. Перейдите в каталог, чтобы добавить товары.
+            </div>
+        </section>
+
+        <section class="order-form">
+            <h2>Оформление заказа</h2>
+            <form id="orderForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="fullName">Имя</label>
+                        <input type="text" id="fullName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="deliveryAddress">Адрес доставки</label>
+                        <input type="text" id="deliveryAddress" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="phone">Номер телефона</label>
+                        <input type="text" id="phone" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="deliveryDate">Дата доставки</label>
+                        <input type="date" id="deliveryDate" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="deliveryInterval">Временной интервал доставки</label>
+                        <select id="deliveryInterval" required>
+                            <option value="">Выберите интервал</option>
+                            <option value="08:00-12:00">08:00-12:00</option>
+                            <option value="12:00-14:00">12:00-14:00</option>
+                            <option value="14:00-18:00">14:00-18:00</option>
+                            <option value="18:00-22:00">18:00-22:00</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="subscribe">Подписаться на рассылку</label>
+                    <input type="checkbox" id="subscribe">
+                </div>
+
+                <div class="form-group">
+                    <label for="comment">Комментарий</label>
+                    <textarea id="comment"></textarea>
+                </div>
+
+                <div class="total-cost">
+                    Итоговая стоимость: <span id="totalPrice">0 ₽</span>
+                    <br>(стоимость доставки <span id="deliveryCost">0 ₽</span>)
+                </div>
+
+                <div class="form-actions">
+                    <button type="reset" class="btn">Сбросить</button>
+                    <button type="submit" class="btn">Оформить</button>
+                </div>
+            </form>
+        </section>
+    </main>
+
+    <!-- Футер -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 Название компании</p>
+        </div>
+    </footer>
+
+    <!-- Подключение скриптов -->
+    <script src="js/cart.js" defer></script>
+</body>
+</html>
