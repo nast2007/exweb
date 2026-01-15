@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Личный кабинет</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Хедер -->
+    <header class="header">
+        <div class="container header__container">
+            <a href="index.html" class="logo">Logo</a>
+            <div class="header__nav">
+                <a href="index.html" class="nav-icon">🏠</a>
+                <a href="cart.html" class="nav-icon">🛒</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Уведомления -->
+    <div id="notification" class="notification"></div>
+
+    <!-- Основной контент -->
+    <main class="container">
+        <section class="orders">
+            <h1>Заказы</h1>
+            <table id="ordersTable">
+                <thead>
+                    <tr>
+                        <th>№</th>
+                        <th>Дата оформления</th>
+                        <th>Состав заказа</th>
+                        <th>Стоимость</th>
+                        <th>Доставка</th>
+                        <th>Действия</th>
+                    </tr>
+                </thead>
+                <tbody id="ordersList">
+                    <!-- Заказы будут подгружаться динамически -->
+                </tbody>
+            </table>
+        </section>
+    </main>
+
+    <!-- Модальные окна -->
+    <div id="viewOrderModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Просмотр заказа</h2>
+            <div id="viewOrderDetails">
+                <!-- Детали заказа будут подгружаться динамически -->
+            </div>
+            <button class="btn" onclick="closeModal('viewOrderModal')">Ok</button>
+        </div>
+    </div>
+
+    <div id="editOrderModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Редактирование заказа</h2>
+            <form id="editOrderForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Дата оформления</label>
+                        <span id="editOrderCreatedAt">-</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="editFullName">Имя</label>
+                        <input type="text" id="editFullName" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="editPhone">Номер телефона</label>
+                        <input type="text" id="editPhone" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editEmail">Email</label>
+                        <input type="email" id="editEmail" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="editDeliveryAddress">Адрес доставки</label>
+                        <input type="text" id="editDeliveryAddress" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editDeliveryDate">Дата доставки</label>
+                        <input type="date" id="editDeliveryDate" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="editDeliveryInterval">Временной интервал доставки</label>
+                        <select id="editDeliveryInterval" required>
+                            <option value="">Выберите интервал</option>
+                            <option value="08:00-12:00">08:00-12:00</option>
+                            <option value="12:00-14:00">12:00-14:00</option>
+                            <option value="14:00-18:00">14:00-18:00</option>
+                            <option value="18:00-22:00">18:00-22:00</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="editComment">Комментарий</label>
+                        <textarea id="editComment"></textarea>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Состав заказа</label>
+                    <div id="editOrderGoods">-</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Стоимость</label>
+                    <div id="editOrderTotal">-</div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn" onclick="closeModal('editOrderModal')">Отмена</button>
+                    <button type="submit" class="btn">Сохранить</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="deleteOrderModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Удаление заказа</h2>
+            <p>Вы уверены, что хотите удалить заказ?</p>
+            <div class="form-actions">
+                <button type="button" class="btn" onclick="closeModal('deleteOrderModal')">Нет</button>
+                <button type="button" class="btn" id="confirmDeleteBtn">Да</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Футер -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 Название компании</p>
+        </div>
+    </footer>
+
+    <!-- Подключение скриптов -->
+    <script src="js/orders.js" defer></script>
+</body>
+</html>
