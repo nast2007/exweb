@@ -18,6 +18,13 @@ function showNotification(message, type = 'info') {
     setTimeout(() => notificationEl.classList.remove('show'), 5000);
 }
 
+// Преобразует YYYY-MM-DD → dd.mm.yyyy
+function formatDateForAPI(dateStr) {
+    if (!dateStr) return '';
+    const [year, month, day] = dateStr.split('-');
+    return `${day}.${month}.${year}`;
+}
+
 async function loadCartGoods() {
     const cartIds = JSON.parse(localStorage.getItem('cart')) || [];
     if (cartIds.length === 0) {
@@ -35,7 +42,7 @@ async function loadCartGoods() {
         renderCart();
     } catch (err) {
         console.error(err);
-        showNotification('Ошибка загрузки корзины', 'error');
+        showNotification('Ошибка загрузки товаров корзины', 'error');
     }
 }
 
@@ -85,7 +92,7 @@ function removeFromCart(goodId) {
     cart = cart.filter(id => id !== goodId);
     localStorage.setItem('cart', JSON.stringify(cart));
     loadCartGoods();
-    showNotification('Товар удалён', 'info');
+    showNotification('Товар удалён из корзины', 'info');
 }
 
 function getDeliveryCost(dateStr, interval) {
@@ -125,34 +132,57 @@ async function submitOrder(data) {
     }
 }
 
+// Обновление цены при изменении даты или интервала
 deliveryDateInput.addEventListener('change', updateTotalPrice);
 deliveryIntervalSelect.addEventListener('change', updateTotalPrice);
 
+// Отправка формы
 orderForm.addEventListener('submit', async (e) => {
     e.preventDefault();
+
+    // Валидация
     if (cartGoods.length === 0) {
         showNotification('Корзина пуста!', 'error');
         return;
     }
+    if (!deliveryDateInput.value) {
+        showNotification('Укажите дату доставки', 'error');
+        return;
+    }
+    if (!deliveryIntervalSelect.value) {
+        showNotification('Выберите интервал доставки', 'error');
+        return;
+    }
 
     const formData = {
-        full_name: document.getElementById('fullName').value,
-        email: document.getElementById('email').value,
-        phone: document.getElementById('phone').value,
+        full_name: document.getElementById('fullName').value.trim(),
+        email: document.getElementById('email').value.trim(),
+        phone: document.getElementById('phone').value.trim(),
         subscribe: document.getElementById('subscribe').checked,
-        delivery_address: document.getElementById('deliveryAddress').value,
-        delivery_date: deliveryDateInput.value,
+        delivery_address: document.getElementById('deliveryAddress').value.trim(),
+        delivery_date: formatDateForAPI(deliveryDateInput.value), // ← ПРАВИЛЬНЫЙ ФОРМАТ!
         delivery_interval: deliveryIntervalSelect.value,
-        comment: document.getElementById('comment').value,
+        comment: document.getElementById('comment').value.trim(),
         good_ids: cartGoods.map(g => g.id)
     };
+
+    // Простая валидация обязательных полей
+    if (!formData.full_name || !formData.email || !formData.phone || !formData.delivery_address) {
+        showNotification('Заполните все обязательные поля', 'error');
+        return;
+    }
 
     const result = await submitOrder(formData);
     if (result) {
         localStorage.removeItem('cart');
-        showNotification('Заказ оформлен!', 'success');
-        setTimeout(() => window.location.href = 'index.html', 1500);
+        showNotification('Заказ успешно оформлен!', 'success');
+        setTimeout(() => {
+            window.location.href = 'index.html';
+        }, 1500);
     }
 });
 
-document.addEventListener('DOMContentLoaded', loadCartGoods);
+// Инициализация
+document.addEventListener('DOMContentLoaded', () => {
+    loadCartGoods();
+});
