@@ -1,4 +1,3 @@
-// cart.js
 const API_BASE = 'https://edu.std-900.ist.mospolytech.ru/exam-2024-1/api';
 const API_KEY = '9bcdd3a0-f5ab-4f24-af75-f01ebb79f6c3';
 
@@ -16,12 +15,9 @@ let cartGoods = [];
 function showNotification(message, type = 'info') {
     notificationEl.textContent = message;
     notificationEl.className = `notification ${type} show`;
-    setTimeout(() => {
-        notificationEl.classList.remove('show');
-    }, 5000);
+    setTimeout(() => notificationEl.classList.remove('show'), 5000);
 }
 
-// Загрузка данных товаров по ID из корзины
 async function loadCartGoods() {
     const cartIds = JSON.parse(localStorage.getItem('cart')) || [];
     if (cartIds.length === 0) {
@@ -39,7 +35,7 @@ async function loadCartGoods() {
         renderCart();
     } catch (err) {
         console.error(err);
-        showNotification('Ошибка загрузки товаров корзины', 'error');
+        showNotification('Ошибка загрузки корзины', 'error');
     }
 }
 
@@ -55,7 +51,7 @@ function renderCart() {
         const img = document.createElement('img');
         img.src = good.image_url.trim();
         img.alt = good.name;
-        img.onerror = () => { img.src = 'assets/placeholder.png'; };
+        img.onerror = () => img.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="180" height="180" viewBox="0 0 24 24"><rect fill="%23eee" width="24" height="24"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-size="4" fill="%23999">No image</text></svg>';
 
         const content = document.createElement('div');
         content.className = 'good-card-content';
@@ -66,17 +62,11 @@ function renderCart() {
 
         const rating = document.createElement('div');
         rating.className = 'good-card-rating';
-        rating.innerHTML = `<span>★ ${good.rating}</span>`;
+        rating.textContent = `★ ${good.rating}`;
 
         const priceDiv = document.createElement('div');
         priceDiv.className = 'good-card-price';
-        if (good.discount_price !== null) {
-            priceDiv.innerHTML = `
-                <span class="actual">${good.discount_price} ₽</span>
-            `;
-        } else {
-            priceDiv.innerHTML = `<span class="actual">${good.actual_price} ₽</span>`;
-        }
+        priceDiv.innerHTML = `<span class="actual">${good.discount_price ?? good.actual_price} ₽</span>`;
 
         const btn = document.createElement('button');
         btn.textContent = 'Удалить';
@@ -95,36 +85,28 @@ function removeFromCart(goodId) {
     cart = cart.filter(id => id !== goodId);
     localStorage.setItem('cart', JSON.stringify(cart));
     loadCartGoods();
-    showNotification('Товар удалён из корзины', 'info');
+    showNotification('Товар удалён', 'info');
 }
 
-function getDeliveryCost(deliveryDateStr, interval) {
+function getDeliveryCost(dateStr, interval) {
     const base = 200;
-    if (!deliveryDateStr || !interval) return base;
-
-    const date = new Date(deliveryDateStr);
-    const dayOfWeek = date.getDay(); // 0 = воскресенье, 6 = суббота
-    const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+    if (!dateStr || !interval) return base;
+    const date = new Date(dateStr);
+    const day = date.getDay(); // 0 = воскресенье
+    const isWeekend = day === 0 || day === 6;
     const isEvening = interval === '18:00-22:00';
-
     if (isWeekend) return base + 300;
     if (isEvening) return base + 200;
     return base;
 }
 
-function calculateTotal() {
+function updateTotalPrice() {
     const totalGoods = cartGoods.reduce((sum, g) => sum + (g.discount_price ?? g.actual_price), 0);
     const deliveryCost = getDeliveryCost(deliveryDateInput.value, deliveryIntervalSelect.value);
-    return { totalGoods, deliveryCost, total: totalGoods + deliveryCost };
-}
-
-function updateTotalPrice() {
-    const { deliveryCost, total } = calculateTotal();
+    totalPriceEl.textContent = `${totalGoods + deliveryCost} ₽`;
     deliveryCostEl.textContent = `${deliveryCost} ₽`;
-    totalPriceEl.textContent = `${total} ₽`;
 }
 
-// Отправка заказа
 async function submitOrder(data) {
     try {
         const res = await fetch(`${API_BASE}/orders?api_key=${API_KEY}`, {
@@ -138,25 +120,20 @@ async function submitOrder(data) {
         }
         return await res.json();
     } catch (err) {
-        console.error(err);
         showNotification(`Ошибка: ${err.message}`, 'error');
         return null;
     }
 }
 
-// Обработчики
 deliveryDateInput.addEventListener('change', updateTotalPrice);
 deliveryIntervalSelect.addEventListener('change', updateTotalPrice);
 
 orderForm.addEventListener('submit', async (e) => {
     e.preventDefault();
-
     if (cartGoods.length === 0) {
         showNotification('Корзина пуста!', 'error');
         return;
     }
-
-    const { totalGoods, deliveryCost, total } = calculateTotal();
 
     const formData = {
         full_name: document.getElementById('fullName').value,
@@ -173,14 +150,9 @@ orderForm.addEventListener('submit', async (e) => {
     const result = await submitOrder(formData);
     if (result) {
         localStorage.removeItem('cart');
-        showNotification('Заказ успешно оформлен!', 'success');
-        setTimeout(() => {
-            window.location.href = 'index.html';
-        }, 1500);
+        showNotification('Заказ оформлен!', 'success');
+        setTimeout(() => window.location.href = 'index.html', 1500);
     }
 });
 
-// Инициализация
-document.addEventListener('DOMContentLoaded', () => {
-    loadCartGoods();
-});
+document.addEventListener('DOMContentLoaded', loadCartGoods);
